@@ -141,7 +141,7 @@ prompt_pure_alt_preprompt_render() {
 	# username and machine if applicable
 	preprompt+=$prompt_pure_alt_username
 	# execution time
-	preprompt+="%F{yellow}${prompt_pure_alt_cmd_exec_time}%f"
+	preprompt+="%F{white}${prompt_pure_alt_cmd_exec_time}%f"
 
 	# if executing through precmd, do not perform fancy terminal editing
 	if [[ "$1" == "precmd" ]]; then
