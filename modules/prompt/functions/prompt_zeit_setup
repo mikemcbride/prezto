@@ -1,0 +1,83 @@
+#
+# Based on zeit.zsh-theme
+# http://github.com/zeit/zeit.zsh-theme
+#
+
+function +vi-git_status {
+  # Check for untracked files or updated submodules since vcs_info does not.
+  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+    hook_com[unstaged]='%F{red}●%f'
+  fi
+}
+
+# Checks if working tree is dirty
+# From robbyrussell/oh-my-zsh
+parse_git_dirty() {
+  local SUBMODULE_SYNTAX=''
+  local GIT_STATUS=''
+  local CLEAN_MESSAGE='nothing to commit (working directory clean)'
+  if [[ "$(command git config --get oh-my-zsh.hide-status)" != "1" ]]; then
+    if [[ $POST_1_7_2_GIT -gt 0 ]]; then
+          SUBMODULE_SYNTAX="--ignore-submodules=dirty"
+    fi
+    if [[ "$DISABLE_UNTRACKED_FILES_DIRTY" == "true" ]]; then
+        GIT_STATUS=$(command git status -s ${SUBMODULE_SYNTAX} -uno 2> /dev/null | tail -n1)
+    else
+        GIT_STATUS=$(command git status -s ${SUBMODULE_SYNTAX} 2> /dev/null | tail -n1)
+    fi
+    if [[ -n $GIT_STATUS ]]; then
+      echo "$ZSH_THEME_GIT_PROMPT_DIRTY"
+    else
+      echo "$ZSH_THEME_GIT_PROMPT_CLEAN"
+    fi
+  else
+    echo "$ZSH_THEME_GIT_PROMPT_CLEAN"
+  fi
+}
+
+# Git: branch/detached head, dirty status
+prompt_zeit_git() {
+  local ref dirty
+  if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    ZSH_THEME_GIT_PROMPT_DIRTY='*'
+    dirty=$(parse_git_dirty)
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
+    echo -n "(${ref/refs\/heads\//}$dirty)"
+  fi
+}
+
+function prompt_zeit_precmd {
+  vcs_info
+}
+
+function prompt_zeit_setup {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+  prompt_opts=(cr percent subst)
+
+  # Load required functions.
+  autoload -Uz add-zsh-hook
+  autoload -Uz vcs_info
+
+  # Add hook for calling vcs_info before each command.
+  add-zsh-hook precmd prompt_zeit_precmd
+
+  # Set vcs_info parameters.
+  zstyle ':vcs_info:*' enable bzr git hg svn
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' formats ' - [%b%c%u]'
+  zstyle ':vcs_info:git*' formats '%b'
+  zstyle ':vcs_info:git*' actionFormats '%b'
+  zstyle ':vcs_info:git*+set-message:*' hooks git_status
+  
+  local prefix="%F{white}▲%f"
+  local dir="%F{white}%2~%f"
+  local branch="%F{yellow}$(prompt_zeit_git)%f"
+  # local branch="%F{yellow}(${vcs_info_msg_0_})%f"
+  
+  # Define prompts.
+  PROMPT="$prefix $dir $branch "
+  RPROMPT=''
+}
+
+prompt_zeit_setup "$@"

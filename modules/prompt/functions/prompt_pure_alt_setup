@@ -106,7 +106,7 @@ prompt_pure_alt_set_title() {
 
 prompt_pure_alt_preexec() {
 	# attempt to detect and prevent prompt_pure_alt_async_git_fetch from interfering with user initiated git or hub fetch
-	[[ $2 =~ (git|hub)\ .*(pull|fetch) ]] && async_flush_jobs 'prompt_pure'
+	[[ $2 =~ (git|hub)\ .*(pull|fetch) ]] && async_flush_jobs 'prompt_pure_alt'
 
 	prompt_pure_alt_cmd_timestamp=$EPOCHSECONDS
 
@@ -251,8 +251,8 @@ prompt_pure_alt_async_git_fetch() {
 prompt_pure_alt_async_tasks() {
 	# initialize async worker
 	((!${prompt_pure_alt_async_init:-0})) && {
-		async_start_worker "prompt_pure" -u -n
-		async_register_callback "prompt_pure" prompt_pure_alt_async_callback
+		async_start_worker "prompt_pure_alt" -u -n
+		async_register_callback "prompt_pure_alt" prompt_pure_alt_async_callback
 		prompt_pure_alt_async_init=1
 	}
 
@@ -262,7 +262,7 @@ prompt_pure_alt_async_tasks() {
 	# check if the working tree changed (prompt_pure_alt_current_working_tree is prefixed by "x")
 	if [[ ${prompt_pure_alt_current_working_tree#x} != $working_tree ]]; then
 		# stop any running async jobs
-		async_flush_jobs "prompt_pure"
+		async_flush_jobs "prompt_pure_alt"
 
 		# reset git preprompt variables, switching working tree
 		unset prompt_pure_alt_git_dirty
@@ -278,7 +278,7 @@ prompt_pure_alt_async_tasks() {
 	# do not preform git fetch if it is disabled or working_tree == HOME
 	if (( ${PURE_GIT_PULL:-1} )) && [[ $working_tree != $HOME ]]; then
 		# tell worker to do a git fetch
-		async_job "prompt_pure" prompt_pure_alt_async_git_fetch "${working_tree}"
+		async_job "prompt_pure_alt" prompt_pure_alt_async_git_fetch "${working_tree}"
 	fi
 
 	# if dirty checking is sufficiently fast, tell worker to check it again, or wait for timeout
@@ -286,7 +286,7 @@ prompt_pure_alt_async_tasks() {
 	if (( time_since_last_dirty_check > ${PURE_GIT_DELAY_DIRTY_CHECK:-1800} )); then
 		unset prompt_pure_alt_git_last_dirty_check_timestamp
 		# check check if there is anything to pull
-		async_job "prompt_pure" prompt_pure_alt_async_git_dirty "${PURE_GIT_UNTRACKED_DIRTY:-1}" "${working_tree}"
+		async_job "prompt_pure_alt" prompt_pure_alt_async_git_dirty "${PURE_GIT_UNTRACKED_DIRTY:-1}" "${working_tree}"
 	fi
 }
 
