@@ -6,6 +6,9 @@
 function prompt_zeit_precmd {
   vcs_info
   
+  # shows the full path in the title
+	prompt_zeit_set_title 'expand-prompt' '%c'
+  
   local prefix="%F{white}▲%f"
   local dir="%F{white}%2~%f"
   local branch="%F{yellow}$(prompt_zeit_git)%f"
@@ -13,6 +16,31 @@ function prompt_zeit_precmd {
   # Define prompts.
   PROMPT="$prefix $dir $branch"
   RPROMPT=''
+}
+
+# from sindresorhus pure
+prompt_zeit_set_title() {
+	# emacs terminal does not support settings the title
+	(( ${+EMACS} )) && return
+
+	# tell the terminal we are setting the title
+	print -n '\e]0;'
+	# show hostname if connected through ssh
+	[[ -n $SSH_CONNECTION ]] && print -Pn '(%m) '
+	case $1 in
+		expand-prompt)
+			print -Pn $2;;
+		ignore-escape)
+			print -rn $2;;
+	esac
+	# end set title
+	print -n '\a'
+}
+
+# also from pure
+prompt_zeit_preexec() {
+	# shows the current dir and executed command in the title while a process is active
+	prompt_zeit_set_title 'ignore-escape' "$2"
 }
 
 # Git: branch/detached head, dirty status
@@ -48,6 +76,7 @@ function prompt_zeit_setup {
 
   # Add hook for calling vcs_info before each command.
   add-zsh-hook precmd prompt_zeit_precmd
+  add-zsh-hook preexec prompt_zeit_preexec
 }
 
 prompt_zeit_setup "$@"
