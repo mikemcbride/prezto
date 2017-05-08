@@ -40,6 +40,7 @@ prompt_zeit_git() {
   local ref dirty
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
     ZSH_THEME_GIT_PROMPT_DIRTY='*'
+    ZSH_THEME_GIT_PROMPT_CLEAN=''
     dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
     echo -n "(${ref/refs\/heads\//}$dirty)"
@@ -75,6 +76,21 @@ function prompt_zeit_setup {
   local branch="%F{yellow}$(prompt_zeit_git)%f"
   # local branch="%F{yellow}(${vcs_info_msg_0_})%f"
   
+  # if [[ -n ${vcs_info_msg_0_} ]]; then
+  #   # vcs_info found something (the documentation got that backwards
+  #   # STATUS line taken from https://github.com/robbyrussell/oh-my-zsh/blob/master/lib/git.zsh
+  #   STATUS=$(command git status --porcelain 2> /dev/null | tail -n1)
+  #   if [[ -n $STATUS ]]; then
+  #     branch="%F{yellow}$(prompt_zeit_git)%f"
+  #     PROMPT='%F{green}%n%F{orange}@%F{yellow}%m:%F{7}%3~%f %F{red}${vcs_info_msg_0_} %f%# '
+  #   else
+  #     PROMPT='%F{green}%n%F{orange}@%F{yellow}%m:%F{7}%3~%f %F{green}${vcs_info_msg_0_} %f%# '
+  #   fi
+  # else
+  #   # nothing from vcs_info
+  #   PROMPT='%F{green}%n%F{orange}@%F{yellow}%m:%F{7}%3~%f %# '
+  # fi
+  # 
   # Define prompts.
   PROMPT="$prefix $dir $branch "
   RPROMPT=''
