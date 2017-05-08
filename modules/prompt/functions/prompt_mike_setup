@@ -1,0 +1,55 @@
+#
+# A monochrome theme that displays basic information.
+#
+# Authors:
+#   Brian Tse <briankftse@gmail.com>
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+# Screenshots:
+#   http://i.imgur.com/zLZNK.png
+#
+
+function +vi-git_status {
+  # Check for untracked files since vcs_info does not.
+  if [[ -n $(git ls-files --other 2> /dev/null) ]]; then
+    hook_com[unstaged]='%F{yellow}*%f'
+  fi
+}
+
+function prompt_mike_precmd {
+  vcs_info
+}
+
+function prompt_mike_setup {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+  prompt_opts=(cr percent subst)
+
+  # Load required functions.
+  autoload -Uz add-zsh-hook
+  autoload -Uz vcs_info
+
+  # Add hook for calling vcs_info before each command.
+  add-zsh-hook precmd prompt_mike_precmd
+
+  # Set vcs_info parameters.
+  zstyle ':vcs_info:*' enable bzr git hg svn
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' stagedstr ''
+  zstyle ':vcs_info:*' unstagedstr '%F{yellow}*%f'
+  zstyle ':vcs_info:*' formats '(%b%c%u) '
+  zstyle ':vcs_info:*' actionformats " - [%b%c%u|%F{cyan}%a%f]"
+  zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b|%F{cyan}%r%f'
+  zstyle ':vcs_info:git*+set-message:*' hooks git_status
+
+  local prefix="%F{white}▲%f"
+  local dir="%F{white}%2~%f"
+  local branch="%F{yellow}${vcs_info_msg_0_}%f"
+  
+  # Define prompts.
+  PROMPT="$prefix $dir $branch"
+  # PROMPT='%2~${vcs_info_msg_0_} » '
+  RPROMPT=''
+}
+
+prompt_mike_setup "$@"
