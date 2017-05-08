@@ -13,8 +13,13 @@ function +vi-git_status {
 function prompt_zeit_precmd {
   vcs_info
   
-  local git_info=$(prompt_zeit_git)
-  # PROMPT="$git_info"
+  local prefix="%F{white}▲%f"
+  local dir="%F{white}%2~%f"
+  local branch="%F{yellow}$(prompt_zeit_git)%f"
+  
+  # Define prompts.
+  PROMPT="$prefix $dir $branch"
+  RPROMPT=''
 }
 
 # Git: branch/detached head, dirty status
@@ -54,22 +59,12 @@ function prompt_zeit_setup {
   add-zsh-hook precmd prompt_zeit_precmd
 
   # Set vcs_info parameters.
-  # zstyle ':vcs_info:*' enable bzr git hg svn
-  # zstyle ':vcs_info:*' check-for-changes true
-  # zstyle ':vcs_info:*' formats ' - [%b%c%u]'
-  # zstyle ':vcs_info:git*' formats ' %b' 'x%R'
-	# zstyle ':vcs_info:git*' actionformats ' %b|%a' 'x%R'
-  # zstyle ':vcs_info:git*+set-message:*' hooks git_status
-  
-  PROMPT="$vcs_info_msg_0_"
-  
-  local prefix="%F{white}▲%f"
-  local dir="%F{white}%2~%f"
-  local branch="%F{yellow}$(prompt_zeit_git)%f"
-  
-  # Define prompts.
-  # PROMPT="$prefix $dir $branch"
-  RPROMPT=''
+  zstyle ':vcs_info:*' enable bzr git hg svn
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' formats ' - [%b%c%u]'
+  zstyle ':vcs_info:*' formats ' %b' 'x%R'
+	zstyle ':vcs_info:*' actionformats ' %b|%a' 'x%R'
+  zstyle ':vcs_info:git*+set-message:*' hooks git_status
 }
 
 prompt_zeit_setup "$@"
