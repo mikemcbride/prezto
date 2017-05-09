@@ -69,26 +69,25 @@ prompt_zeit_git() {
 }
 
 prompt_zeit_check_git_arrows() {
-	# reset git arrows
-	prompt_zeit_git_arrows=
-
 	# check if there is an upstream configured for this branch
-	command git rev-parse --abbrev-ref @'{u}' &>/dev/null || return
+	if $(command git rev-parse --abbrev-ref @'{u}' &>/dev/null); then
+    local arrow_status
+  	# check git left and right arrow_status
+  	arrow_status="$(command git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
+  	# exit if the command failed
+  	(( !$? )) || return
 
-	local arrow_status
-	# check git left and right arrow_status
-	arrow_status="$(command git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
-	# exit if the command failed
-	(( !$? )) || return
+  	# left and right are tab-separated, split on tab and store as array
+  	arrow_status=(${(ps:\t:)arrow_status})
+  	local arrows left=${arrow_status[1]} right=${arrow_status[2]}
 
-	# left and right are tab-separated, split on tab and store as array
-	arrow_status=(${(ps:\t:)arrow_status})
-	local arrows left=${arrow_status[1]} right=${arrow_status[2]}
+  	(( ${right:-0} > 0 )) && arrows+="⇣"
+  	(( ${left:-0} > 0 )) && arrows+="⇡"
 
-	(( ${right:-0} > 0 )) && arrows+="⇣"
-	(( ${left:-0} > 0 )) && arrows+="⇡"
-
-	[[ -n $arrows ]] && prompt_zeit_git_arrows=" ${arrows}"
+  	echo -n "${arrows}"
+  else
+    echo -n
+  fi
 }
 
 function prompt_zeit_setup {
