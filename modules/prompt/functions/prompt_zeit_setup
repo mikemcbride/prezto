@@ -45,7 +45,7 @@ prompt_zeit_preexec() {
 
 # Git: branch/detached head, dirty status
 prompt_zeit_git() {
-  local ref dirty
+  local ref dirty arrows
   if [[ -n ${vcs_info_msg_0_} ]]; then
     # vcs_info found something (the documentation got that backwards)
     # STATUS line taken from https://github.com/robbyrussell/oh-my-zsh/blob/master/lib/git.zsh
@@ -59,12 +59,36 @@ prompt_zeit_git() {
     
     if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
       ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
-      echo -n "(${ref/refs\/heads\//}$dirty) "
+      arrows=" %F{green}$(prompt_zeit_check_git_arrows)%f"
+      echo -n "(${ref/refs\/heads\//}$dirty)$arrows "
     fi
   else
     # nothing from vcs_info
     echo -n
   fi
+}
+
+prompt_zeit_check_git_arrows() {
+	# reset git arrows
+	prompt_zeit_git_arrows=
+
+	# check if there is an upstream configured for this branch
+	command git rev-parse --abbrev-ref @'{u}' &>/dev/null || return
+
+	local arrow_status
+	# check git left and right arrow_status
+	arrow_status="$(command git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
+	# exit if the command failed
+	(( !$? )) || return
+
+	# left and right are tab-separated, split on tab and store as array
+	arrow_status=(${(ps:\t:)arrow_status})
+	local arrows left=${arrow_status[1]} right=${arrow_status[2]}
+
+	(( ${right:-0} > 0 )) && arrows+="⇣"
+	(( ${left:-0} > 0 )) && arrows+="⇡"
+
+	[[ -n $arrows ]] && prompt_zeit_git_arrows=" ${arrows}"
 }
 
 function prompt_zeit_setup {
