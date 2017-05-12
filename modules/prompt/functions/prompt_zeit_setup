@@ -58,6 +58,7 @@ prompt_zeit_git() {
     fi
     
     if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+      # get ref to display branch name
       ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
       arrows="%F{green}$(prompt_zeit_check_git_arrows)%f"
       echo -n "(${ref/refs\/heads\//}$dirty) $arrows"
@@ -68,13 +69,18 @@ prompt_zeit_git() {
   fi
 }
 
+# mostly stolen from sindresorhus Pure with some modifications to make it work for me
 prompt_zeit_check_git_arrows() {
   local arrows=''
 	# check if there is an upstream configured for this branch
 	if $(command git rev-parse --abbrev-ref @'{u}' &>/dev/null); then
     local arrow_status
-  	# check git left and right arrow_status
-  	arrow_status="$(command git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
+  	# check git left and right arrow_status:
+    # fetch the remote silently (without submodules because it is faster)
+    # git rev-list --left-right gives us an output that will tell us how many commits ahead and behind we are from our remote
+    # if left is > 0, we are ahead, so the up arrow will show
+    # if right is > 0, we are behind, so the down arrow will show
+  	arrow_status="$(command git fetch --no-recurse-submodules --quiet && git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
   	# exit if the command failed
   	(( !$? )) || return
 
