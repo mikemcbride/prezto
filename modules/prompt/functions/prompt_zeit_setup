@@ -4,18 +4,8 @@
 #
 
 function prompt_zeit_precmd {
-  vcs_info
-  
   # shows the full path in the title
 	prompt_zeit_set_title 'expand-prompt' '%c'
-  
-  local prefix="%F{white}▲%f"
-  local dir="%F{white}%2~%f"
-  local branch="%F{yellow}$(prompt_zeit_git)%f"
-  
-  # Define prompts.
-  PROMPT="$prefix $dir $branch"
-  RPROMPT=''
 }
 
 # from sindresorhus pure
@@ -43,74 +33,22 @@ prompt_zeit_preexec() {
 	prompt_zeit_set_title 'ignore-escape' "$2"
 }
 
-# Git: branch/detached head, dirty status
-prompt_zeit_git() {
-  local ref dirty arrows
-  if [[ -n ${vcs_info_msg_0_} ]]; then
-    # vcs_info found something (the documentation got that backwards)
-    # STATUS line taken from https://github.com/robbyrussell/oh-my-zsh/blob/master/lib/git.zsh
-    STATUS=$(command git status --porcelain --ignore-submodules -unormal 2> /dev/null | tail -n1)
-    
-    if [[ -n $STATUS ]]; then
-      dirty='*'
-    else
-      dirty=''
-    fi
-    
-    if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-      # get ref to display branch name
-      ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
-      arrows="%F{green}$(prompt_zeit_check_git_arrows)%f"
-      echo -n "(${ref/refs\/heads\//}$dirty) $arrows"
-    fi
-  else
-    # nothing from vcs_info
-    echo -n
-  fi
-}
-
-# mostly stolen from sindresorhus Pure with some modifications to make it work for me
-prompt_zeit_check_git_arrows() {
-  local arrows=''
-	# check if there is an upstream configured for this branch
-	if $(command git rev-parse --abbrev-ref @'{u}' &>/dev/null); then
-    local arrow_status
-  	# check git left and right arrow_status:
-    # fetch the remote silently (without submodules because it is faster)
-    # git rev-list --left-right gives us an output that will tell us how many commits ahead and behind we are from our remote
-    # if left is > 0, we are ahead, so the up arrow will show
-    # if right is > 0, we are behind, so the down arrow will show
-  	arrow_status="$(command git fetch --no-recurse-submodules --quiet && git rev-list --left-right --count HEAD...@'{u}' 2>/dev/null)"
-  	# exit if the command failed
-  	(( !$? )) || return
-
-  	# left and right are tab-separated, split on tab and store as array
-  	arrow_status=(${(ps:\t:)arrow_status})
-  	local left=${arrow_status[1]} right=${arrow_status[2]}
-
-  	(( ${right:-0} > 0 )) && arrows+="⇣"
-  	(( ${left:-0} > 0 )) && arrows+="⇡"
-  else
-    echo -n
-  fi
-  
-  if [[ $arrows == "" ]] then;
-    echo -n
-  else
-    echo -n "$arrows "
-  fi
-}
-
 function prompt_zeit_setup {
-  prompt_opts=(cr percent subst)
+	setopt prompt_subst
 
   # Load required functions.
   autoload -Uz add-zsh-hook
-  autoload -Uz vcs_info
 
   # Add hook for calling vcs_info before each command.
   add-zsh-hook precmd prompt_zeit_precmd
   add-zsh-hook preexec prompt_zeit_preexec
+  
+  local prefix="%F{white}▲%f"
+  local dir="%F{white}%1~%f"
+  local branch="%F{yellow}$(vcprompt -f '(%b%m)')%f"
+  
+  # Define prompts.
+  PROMPT="$prefix $dir $branch "
 }
 
 prompt_zeit_setup "$@"
