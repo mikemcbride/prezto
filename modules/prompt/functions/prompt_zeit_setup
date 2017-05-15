@@ -45,7 +45,7 @@ function prompt_zeit_setup {
   
   local prefix="%F{white}▲%f"
   local dir="%F{white}%2~%f"
-  local branch="%F{yellow}$(vcprompt -f '(%b%m)')%f"
+  local branch="%F{yellow}$(vcprompt -f '(%b)')%f"
   
   # Define prompts.
   PROMPT="$prefix $dir $branch "
