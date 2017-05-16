@@ -7,12 +7,11 @@ function prompt_zeit_precmd {
   # shows the full path in the title
 	prompt_zeit_set_title 'expand-prompt' '%c'
 	
-	local prefix="%F{white}▲%f"
-  local dir="%F{white}%2~%f"
-  local branch="%F{yellow}$(vcprompt -f '(%b)')%f"
+	local prefix="%F{white}▲ %2~%f"
+  local branch="%F{yellow}$(vcprompt -f '(%b%m)')%f"
   
-  # Define prompts.
-  PROMPT="$prefix $dir $branch "
+  # Define prompt
+  PROMPT="$prefix $branch "
 }
 
 # from sindresorhus pure
