@@ -6,6 +6,13 @@
 function prompt_zeit_precmd {
   # shows the full path in the title
 	prompt_zeit_set_title 'expand-prompt' '%c'
+	
+	local prefix="%F{white}▲%f"
+  local dir="%F{white}%2~%f"
+  local branch="%F{yellow}$(vcprompt -f '(%b)')%f"
+  
+  # Define prompts.
+  PROMPT="$prefix $dir $branch "
 }
 
 # from sindresorhus pure
@@ -42,13 +49,6 @@ function prompt_zeit_setup {
   # Add hook for calling vcs_info before each command.
   add-zsh-hook precmd prompt_zeit_precmd
   add-zsh-hook preexec prompt_zeit_preexec
-  
-  local prefix="%F{white}▲%f"
-  local dir="%F{white}%2~%f"
-  local branch="%F{yellow}$(vcprompt -f '(%b)')%f"
-  
-  # Define prompts.
-  PROMPT="$prefix $dir $branch "
 }
 
 prompt_zeit_setup "$@"
