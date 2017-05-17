@@ -8,10 +8,10 @@ function prompt_zeit_precmd {
 	prompt_zeit_set_title 'expand-prompt' '%c'
 	
 	local prefix="%F{white}▲ %2~%f"
-  local branch="%F{yellow}$(vcprompt -f '(%b%m)')%f"
+  local branch="%F{yellow}$(vcprompt -f '(%b%m) ')%f"
   
   # Define prompt
-  PROMPT="$prefix $branch "
+  PROMPT="$prefix $branch"
 }
 
 # from sindresorhus pure
