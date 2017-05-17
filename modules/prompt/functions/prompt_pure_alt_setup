@@ -336,10 +336,6 @@ prompt_pure_alt_setup() {
 
 	# prompt turns red if the previous command didn't exit with 0
 	PROMPT="%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f "
-	# PROMPT="%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-⃤⃤▲}%f "
-
-  # prompt is always white
-	# PROMPT="%F{white}${PURE_PROMPT_SYMBOL:-⃤⃤▲}%f "
 }
 
 prompt_pure_alt_setup "$@"
