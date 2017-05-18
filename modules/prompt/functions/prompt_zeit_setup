@@ -1,14 +1,18 @@
 #
 # Based on zeit.zsh-theme
 # http://github.com/zeit/zeit.zsh-theme
+# works well with hyper-website-theme plugin for Hyper.app
 #
 
 function prompt_zeit_precmd {
   # shows the full path in the title
 	prompt_zeit_set_title 'expand-prompt' '%c'
 	
-	local prefix="%F{white}▲ %2~%f"
-  local branch="%F{yellow}$(vcprompt -f '(%b%m) ')%f"
+	local prefix_color=255
+	local branch_color=247
+	
+	local prefix="%F{$prefix_color}▲ %2~%f"
+  local branch="%F{$branch_color}$(vcprompt -f '(%b%m) ')%f" # in hyper-website-theme, yellow will be gray
   
   # Define prompt
   PROMPT="$prefix $branch"
