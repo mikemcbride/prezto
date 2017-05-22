@@ -4,9 +4,9 @@
 # works well with hyper-website-theme plugin for Hyper.app
 #
 
-function prompt_zeit_precmd {
+function prompt_mike_precmd {
   # shows the full path in the title
-	prompt_zeit_set_title 'expand-prompt' '%c'
+	prompt_mike_set_title 'expand-prompt' '%c'
 	
 	local prefix_color=255
 	local branch_color=247
@@ -48,7 +48,7 @@ git_branch_info() {
 }
 
 # from sindresorhus pure
-prompt_zeit_set_title() {
+prompt_mike_set_title() {
 	# emacs terminal does not support settings the title
 	(( ${+EMACS} )) && return
 
@@ -66,20 +66,21 @@ prompt_zeit_set_title() {
 	print -n '\a'
 }
 
-prompt_zeit_preexec() {
+
+prompt_mike_preexec() {
 	# shows the current dir and executed command in the title while a process is active
-	prompt_zeit_set_title 'ignore-escape' "$2"
+	prompt_mike_set_title 'ignore-escape' "$2"
 }
 
-function prompt_zeit_setup {
+function prompt_mike_setup {
 	setopt prompt_subst
 
   # Load required functions.
   autoload -Uz add-zsh-hook
 
   # Add hook for calling vcs_info before each command.
-  add-zsh-hook precmd prompt_zeit_precmd
-  add-zsh-hook preexec prompt_zeit_preexec
+  add-zsh-hook precmd prompt_mike_precmd
+  add-zsh-hook preexec prompt_mike_preexec
 }
 
-prompt_zeit_setup "$@"
+prompt_mike_setup "$@"
