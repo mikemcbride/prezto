@@ -1,21 +1,24 @@
 #
-# Based on zeit.zsh-theme
+# Based on things I like from zeit.zsh-theme and Sindre Sorhus' Pure
 # http://github.com/zeit/zeit.zsh-theme
-# works well with hyper-website-theme plugin for Hyper.app
+# http://github.com/sindresorhus/pure
+# works well with my hyper-electron-highlighter theme
 #
 
 function prompt_mike_precmd {
   # shows the full path in the title
 	prompt_mike_set_title 'expand-prompt' '%c'
 	
-	local prefix_color=255
-	local branch_color=247
+	local dir_color=004 # blue
+	local branch_color=008 # gray
+	local prompt_char_color=005 # magenta
 	
-	local prefix="%F{$prefix_color}▲ %1~%f"
+	local dir="%F{$dir_color}%2~%f"
   local branch="%F{$branch_color}$(git_branch_info)%f"
+	local prompt_char="%F{$prompt_char_color}❯%f"
   
   # Define prompt
-  PROMPT="$prefix $branch"
+  PROMPT="$dir $branch$prompt_char "
 }
 
 git_branch_info() {
@@ -65,7 +68,6 @@ prompt_mike_set_title() {
 	# end set title
 	print -n '\a'
 }
-
 
 prompt_mike_preexec() {
 	# shows the current dir and executed command in the title while a process is active
