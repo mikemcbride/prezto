@@ -22,8 +22,9 @@ function prompt_mike_precmd {
 }
 
 git_branch_info() {
+
 	if ! git rev-parse --is-inside-work-tree &>/dev/null; then
-	  print -n ''; exit 0
+	  return
 	fi
 
 	local gitstatus=$(git status --porcelain | cut -d' ' -f2)
