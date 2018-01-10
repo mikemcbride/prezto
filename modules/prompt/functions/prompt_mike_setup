@@ -9,9 +9,15 @@ function prompt_mike_precmd {
   # shows the full path in the title
 	prompt_mike_set_title 'expand-prompt' '%c'
 	
-	local dir_color=004 # blue
-	local branch_color=008 # gray
-	local prompt_char_color=005 # magenta
+  # for hyper-electron-highlighter
+  local dir_color=004 # blue
+  local branch_color=008 # gray
+  local prompt_char_color=005 # magenta
+  
+  # for hyper-mono-christmas 
+	# local dir_color=007 # white
+	# local branch_color=004 # blue
+	# local prompt_char_color=008 # gray
 	
 	local dir="%F{$dir_color}%2~%f"
   local branch="%F{$branch_color}$(git_branch_info)%f"
@@ -53,7 +59,7 @@ git_branch_info() {
 
 # from sindresorhus pure
 prompt_mike_set_title() {
-	# emacs terminal does not support settings the title
+	# emacs terminal does not support setting the title
 	(( ${+EMACS} )) && return
 
 	# tell the terminal we are setting the title
