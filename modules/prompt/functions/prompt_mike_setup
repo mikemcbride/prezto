@@ -10,14 +10,14 @@ function prompt_mike_precmd {
 	prompt_mike_set_title 'expand-prompt' '%c'
 	
   # for hyper-electron-highlighter
-  # local dir_color=004 # blue
-  # local branch_color=008 # gray
-  # local prompt_char_color=005 # magenta
+  local dir_color=004 # blue
+  local branch_color=008 # gray
+  local prompt_char_color=005 # magenta
   
   # for hyper-mono-christmas 
-	local dir_color=007 # white
-	local branch_color=004 # blue
-	local prompt_char_color=008 # gray
+	# local dir_color=007 # white
+	# local branch_color=004 # blue
+	# local prompt_char_color=008 # gray
 	
 	local dir="%F{$dir_color}%2~%f"
   local branch="%F{$branch_color}$(git_branch_info)%f"
