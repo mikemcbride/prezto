@@ -12,6 +12,7 @@ function prompt_mike_precmd {
   # for hyper-electron-highlighter
   local dir_color=004 # blue
   local branch_color=008 # gray
+# local branch_color=003 # yellow 
   local prompt_char_color=005 # magenta
   
   # for hyper-mono-christmas 
