@@ -9,15 +9,27 @@ function prompt_mike_precmd {
   # shows the full path in the title
 	prompt_mike_set_title 'expand-prompt' '%c'
 	
+  # colors:
+  # 001 = red
+  # 002 = green
+  # 003 = yellow
+  # 004 = blue
+  # 005 = magenta
+  # 006 = cyan
+  # 007 = white
+  # 008 = gray
+
   # for hyper-electron-highlighter
-  local dir_color=004 # blue
-  local branch_color=008 # gray
-  local prompt_char_color=005 # magenta
+  local dir_color=004
+  local branch_color=008
+  local dirty_branch_color=003
+  local prompt_char_color=005
   
   # for hyper-mono-christmas 
-  # local dir_color=007 # white
-  # local branch_color=004 # blue
-  # local prompt_char_color=008 # gray
+  # local dir_color=007
+  # local branch_color=004
+  # local dirty_branch_color=002
+  # local prompt_char_color=008
 	
 	local dir="%F{$dir_color}%2~%f"
   local branch="%F{$branch_color}$(git_branch_info)%f"
@@ -50,11 +62,13 @@ git_branch_info() {
 
 	[ -z "$line" ] && clean=1
 
-	[ $clean -eq 1 ] && branch="$branch"
-	[ $clean -eq 0 ] && branch="$branch*"
+  local dirty_branch="%F{$dirty_branch_color}[$branch*]%f"
+
+	[ $clean -eq 1 ] && branch="[$branch] "
+	[ $clean -eq 0 ] && branch="$dirty_branch "
 
 	# output
-	print -n "($branch) "	
+	print -n "$branch"
 }
 
 # from sindresorhus pure
